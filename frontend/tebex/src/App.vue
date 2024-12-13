@@ -17,7 +17,11 @@
             class="text-gray-600 hover:text-blue-500 mx-2"
             >Login</router-link
           >
-          <!-- Add Login link -->
+          <router-link
+            to="/register"
+            class="text-gray-600 hover:text-blue-500 mx-2"
+            >Register</router-link
+          >
         </div>
       </div>
     </nav>

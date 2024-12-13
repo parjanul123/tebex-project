@@ -1,7 +1,9 @@
 import { createRouter, createWebHistory } from "vue-router";
-import HomeView from "./views/HomeView.vue";
-import CartView from "./views/CartView.vue"; // Import the Cart view
-import LoginView from "./views/LoginView.vue"; // Import the Login view
+import HomeView from "./views/HomeView.vue"; // Verifică că fișierul există
+import CartView from "./views/CartView.vue"; // Verifică că fișierul există
+import LoginView from "./views/LoginView.vue"; // Verifică că fișierul există
+import RegisterView from "./views/RegisterView.vue";
+import AboutView from "./views/AboutView.vue";
 
 const routes = [
   {
@@ -12,13 +14,22 @@ const routes = [
   {
     path: "/cart",
     name: "Cart",
-    component: CartView, // Add the Cart route
+    component: CartView,
   },
   {
     path: "/login",
     name: "Login",
-    component: LoginView, // Add the Login route
+    component: LoginView,
   },
+  {
+    path: "/register",
+    name: "Register",
+    component: RegisterView,
+  },
+  {path : "/about",
+  name : "About",
+  component: AboutView,
+ }
 ];
 
 const router = createRouter({
