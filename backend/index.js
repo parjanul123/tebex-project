@@ -1,54 +1,55 @@
-// server.js
-const express = require("express");
-const cors = require("cors");
-const bodyParser = require("body-parser");
+const express = require('express');
+const bcrypt = require('bcrypt');
+const db = require('./db'); // Conexiunea la baza de date
 
-const app = express();
-const PORT = 3500;
+const router = express.Router();
 
-// Middleware
-app.use(cors());
-app.use(bodyParser.json());
+// Ruta pentru înregistrare
+router.post('/register', async (req, res) => {
+  const { username, email, password } = req.body;
 
-// Sample cart data
-let cart = [];
+  console.log('Request body:', req.body); // Log pentru debug
 
-// Hardcoded user data for demonstration
-const users = [
-  { username: "user1", password: "password1" },
-  { username: "user2", password: "password2" },
-];
-
-// Routes
-app.get("/api/cart", (req, res) => {
-  res.json(cart);
-});
-
-app.post("/api/cart", (req, res) => {
-  const item = req.body;
-  cart.push(item);
-  res.status(201).json(item);
-});
-
-app.delete("/api/cart/:itemId", (req, res) => {
-  const itemId = req.params.itemId;
-  cart = cart.filter((item) => item.id !== itemId);
-  res.status(204).send();
-});
-
-// Login route
-app.post("/api/login", (req, res) => {
-  const { username, password } = req.body;
-  const user = users.find(
-    (u) => u.username === username && u.password === password
-  );
-  if (user) {
-    res.status(200).json({ message: "Login successful" });
-  } else {
-    res.status(401).json({ message: "Invalid username or password" });
+  if (!username || !email || !password) {
+    return res.status(400).json({ message: 'All fields are required.' });
   }
+
+  // Verifică dacă utilizatorul există deja
+  db.query('SELECT * FROM users WHERE email = ?', [email], async (err, results) => {
+    if (err) {
+      console.error('Database error during SELECT:', err); // Log eroare SELECT
+      return res.status(500).json({ message: 'Database error.' });
+    }
+
+    if (results.length > 0) {
+      console.log('User already exists:', email); // Log utilizator existent
+      return res.status(400).json({ message: 'User already exists.' });
+    }
+
+    try {
+      // Creează un hash al parolei
+      const hashedPassword = await bcrypt.hash(password, 10);
+      console.log('Hashed password:', hashedPassword); // Log parola hashată
+
+      // Salvează utilizatorul în baza de date
+      db.query(
+        'INSERT INTO users (username, email, password) VALUES (?, ?, ?)',
+        [username, email, hashedPassword],
+        (err, result) => {
+          if (err) {
+            console.error('Database error during INSERT:', err); // Log eroare INSERT
+            return res.status(500).json({ message: 'Database error.' });
+          }
+
+          console.log('User registered successfully:', email); // Log utilizator înregistrat
+          res.status(201).json({ message: 'User registered successfully!' });
+        }
+      );
+    } catch (err) {
+      console.error('Error hashing password:', err); // Log eroare hashing
+      res.status(500).json({ message: 'Internal server error.' });
+    }
+  });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
+module.exports = router;

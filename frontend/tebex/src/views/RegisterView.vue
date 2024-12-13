@@ -1,50 +1,80 @@
 <template>
-  <div class="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
-    <h1 class="text-2xl font-bold mb-4">Register</h1>
-    <form>
-      <div class="mb-4">
-        <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
-        <input
-          id="username"
-          type="text"
-          class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 outline outline-1 outline-gray-300 focus:outline-blue-500"
-        />
-      </div>
-      <div class="mb-4">
-        <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-        <input
-          id="email"
-          type="email"
-          class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 outline outline-1 outline-gray-300 focus:outline-blue-500"
-        />
-      </div>
-      <div class="mb-4">
-        <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-        <input
-          id="password"
-          type="password"
-          class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 outline outline-1 outline-gray-300 focus:outline-blue-500"
-        />
-      </div>
-      <button
-        type="submit"
-        class="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
-      >
-        Register
-      </button>
+  <div>
+    <form @submit.prevent="registerUser" class="form-container">
+      <input type="text" v-model="username" placeholder="Username" required />
+      <input type="email" v-model="email" placeholder="Email" required />
+      <input type="password" v-model="password" placeholder="Password" required />
+      <button type="submit">Register</button>
     </form>
   </div>
 </template>
 
 <script>
 export default {
-  name: "RegisterView",
+  data() {
+    return {
+      username: '',
+      email: '',
+      password: '',
+    };
+  },
+  methods: {
+    async registerUser() {
+      try {
+        const response = await fetch('http://localhost:5000/routes/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            username: this.username,
+            email: this.email,
+            password: this.password,
+          }),
+        });
+
+        if (response.ok) {
+          alert('User registered successfully!');
+          this.username = '';
+          this.email = '';
+          this.password = '';
+        } else {
+          const errorData = await response.json();
+          alert(`Error: ${errorData.message}`);
+        }
+      } catch (err) {
+        console.error('Error during registration:', err);
+        alert('Something went wrong. Please try again.');
+      }
+    },
+  },
 };
 </script>
 
 <style scoped>
-/* Stil personalizat pentru contur */
-input {
-  transition: outline 0.2s ease-in-out;
+/* Stiluri personalizate */
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem; /* Spațiere între elemente */
+  max-width: 300px; /* Lățime maximă */
+  margin: 0 auto; /* Centrare pe pagină */
+}
+
+input, button {
+  padding: 0.5rem; /* Adaugă spațiu în interior */
+  font-size: 1rem; /* Dimensiunea textului */
+  border: 1px solid #ccc; /* Adaugă un contur */
+  border-radius: 5px; /* Rotunjire colțuri */
+}
+
+button {
+  background-color: #007bff; /* Culoare buton */
+  color: rgb(255, 255, 255); /* Text alb */
+  cursor: pointer; /* Cursor pointer pentru hover */
+}
+
+button:hover {
+  background-color: #0056b3; /* Culoare la hover */
 }
 </style>

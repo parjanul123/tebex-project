@@ -4,7 +4,7 @@
       <div
         class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center"
       >
-        <div class="text-lg font-bold text-gray-800">My App</div>
+        <div class="text-lg font-bold text-gray-800">Tebex</div>
         <div>
           <router-link to="/" class="text-gray-600 hover:text-blue-500 mx-2"
             >Home</router-link
