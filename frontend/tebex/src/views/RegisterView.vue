@@ -3,7 +3,12 @@
     <form @submit.prevent="registerUser" class="form-container">
       <input type="text" v-model="username" placeholder="Username" required />
       <input type="email" v-model="email" placeholder="Email" required />
-      <input type="password" v-model="password" placeholder="Password" required />
+      <input
+        type="password"
+        v-model="password"
+        placeholder="Password"
+        required
+      />
       <button type="submit">Register</button>
     </form>
   </div>
@@ -13,18 +18,19 @@
 export default {
   data() {
     return {
-      username: '',
-      email: '',
-      password: '',
+      username: "",
+      email: "",
+      password: "",
     };
   },
   methods: {
     async registerUser() {
       try {
-        const response = await fetch('http://localhost:5000/routes/register', {
-          method: 'POST',
+        const response = await fetch("http://localhost:3500/api/register", {
+          // Change this line
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
             username: this.username,
@@ -32,19 +38,18 @@ export default {
             password: this.password,
           }),
         });
-
         if (response.ok) {
-          alert('User registered successfully!');
-          this.username = '';
-          this.email = '';
-          this.password = '';
+          alert("User registered successfully!");
+          this.username = "";
+          this.email = "";
+          this.password = "";
         } else {
           const errorData = await response.json();
           alert(`Error: ${errorData.message}`);
         }
       } catch (err) {
-        console.error('Error during registration:', err);
-        alert('Something went wrong. Please try again.');
+        console.error("Error during registration:", err);
+        alert("Something went wrong. Please try again.");
       }
     },
   },
@@ -61,7 +66,8 @@ export default {
   margin: 0 auto; /* Centrare pe pagină */
 }
 
-input, button {
+input,
+button {
   padding: 0.5rem; /* Adaugă spațiu în interior */
   font-size: 1rem; /* Dimensiunea textului */
   border: 1px solid #ccc; /* Adaugă un contur */

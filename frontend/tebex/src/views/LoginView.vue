@@ -1,7 +1,7 @@
 <template>
   <div class="container mx-auto p-4">
     <h1 class="text-2xl font-bold mb-4">Login</h1>
-    <form @submit.prevent="login" class="bg-white p-4 rounded shadow-md">
+    <form @submit.prevent="loginUser" class="bg-white p-4 rounded shadow-md">
       <div class="mb-4">
         <label for="username" class="block text-sm font-semibold mb-2"
           >Username</label
@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import { mapActions } from "vuex";
 
 export default {
   name: "LoginView",
@@ -50,15 +50,12 @@ export default {
     };
   },
   methods: {
-    async login() {
+    ...mapActions(["login"]), // Map the login action from Vuex
+
+    async loginUser() {
       try {
-        const response = await axios.post("http://localhost:3500/api/login", {
-          username: this.username,
-          password: this.password,
-        });
-        alert(response.data.message); // Show success message
-        // Redirect to home or cart view after successful login
-        this.$router.push("/"); // Redirect to home page or cart
+        await this.login({ username: this.username, password: this.password }); // Call Vuex action
+        this.$router.push("/"); // Redirect to home page or cart after successful login
       } catch (error) {
         this.errorMessage = error.response.data.message; // Show error message
       }
