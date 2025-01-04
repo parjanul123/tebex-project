@@ -8,12 +8,18 @@ import ProfileView from "./views/ProfileView.vue";
 import RedMView from "./views/RedMView.vue";
 import EreborView from "./views/EreborView.vue";
 import PachetGoldView from "./views/PachetGoldView.vue";
+import WalletView from "./views/WalletView.vue";
 
 const routes = [
   {
     path: "/",
     name: "Home",
     component: HomeView,
+  },
+  {
+    path: "/connect-wallet",
+    name: "ConnectWallet",
+    component: WalletView,
   },
   {
     path: "/redm",

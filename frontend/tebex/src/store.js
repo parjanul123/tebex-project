@@ -3,10 +3,13 @@ import axios from "axios";
 
 const store = createStore({
   state: {
-    count: 0,
+    count: 0, // Contor pentru testare
     cart: [], // Elemente din coșul de cumpărături
     user: null, // Utilizatorul autentificat
     selectedProfile: null, // Profilul selectat (ex: RedM, Erebor)
+    walletConnected: false, // Statusul conectării la portofel
+    walletAddress: null, // Adresa portofelului conectat
+    egldPrice: null, // Prețul EGLD în EUR
   },
   mutations: {
     increment(state) {
@@ -31,9 +34,18 @@ const store = createStore({
       state.user = null; // Resetează utilizatorul
       state.cart = []; // Golește coșul de cumpărături
       state.selectedProfile = null; // Resetează profilul selectat
+      state.walletConnected = false; // Deconectează portofelul
+      state.walletAddress = null; // Resetează adresa portofelului
     },
     setSelectedProfile(state, profile) {
       state.selectedProfile = profile; // Setează profilul selectat
+    },
+    setWalletConnected(state, walletAddress) {
+      state.walletConnected = true; // Marchează portofelul ca fiind conectat
+      state.walletAddress = walletAddress; // Salvează adresa portofelului
+    },
+    setEGLDPrice(state, price) {
+      state.egldPrice = price; // Setează prețul EGLD
     },
   },
   actions: {
@@ -99,6 +111,17 @@ const store = createStore({
     selectProfile({ commit }, profile) {
       commit("setSelectedProfile", profile); // Setează profilul selectat
     },
+    async fetchEGLDPrice({ commit }) {
+      try {
+        const response = await axios.get(
+          "https://api.coingecko.com/api/v3/simple/price?ids=elrond&vs_currencies=eur"
+        );
+        const price = response.data.elrond.eur; // Prețul EGLD în EUR
+        commit("setEGLDPrice", price);
+      } catch (error) {
+        console.error("Failed to fetch EGLD price:", error);
+      }
+    },
   },
   getters: {
     getCount(state) {
@@ -115,6 +138,13 @@ const store = createStore({
     },
     getSelectedProfile(state) {
       return state.selectedProfile; // Returnează profilul selectat
+    },
+    egldPrice(state) {
+      return state.egldPrice; // Prețul EGLD în EUR
+    },
+    calculatePackagePrice: (state) => (priceInEUR) => {
+      if (!state.egldPrice) return null; // Dacă prețul EGLD nu este disponibil
+      return (priceInEUR / state.egldPrice).toFixed(4); // Preț în EGLD cu 4 zecimale
     },
   },
 });
