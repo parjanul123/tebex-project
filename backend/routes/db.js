@@ -1,13 +1,13 @@
-// routes/db.js
+require("dotenv").config(); // Load environment variables
 const mysql = require("mysql2/promise");
 
 const dbConfig = {
-  host: "localhost",
-  port: 3307,
-  user: "my_user",
-  password: "my_password",
-  database: "my_database",
-  ssl: { rejectUnauthorized: false },
+  host: process.env.DB_HOST || "localhost",
+  port: process.env.DB_PORT || 3306,
+  user: process.env.DB_USER || "root",
+  password: process.env.DB_PASSWORD || "",
+  database: process.env.DB_NAME || "test",
+  ssl:  false 
 };
 
 let connection;
@@ -44,6 +44,7 @@ async function connectToDatabase() {
       console.log("Cart table is ready.");
     } catch (error) {
       console.error("Error connecting to MySQL database:", error);
+      throw error; // Throw the error to handle it properly in the caller function
     }
   }
   return connection;

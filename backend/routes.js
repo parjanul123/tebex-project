@@ -1,56 +1,66 @@
-const express = require('express');
-const bcrypt = require('bcrypt');
-const db = require('../db'); // Conexiunea la baza de date
-
+const express = require("express");
 const router = express.Router();
+const axios = require("axios");
 
-// Ruta pentru înregistrare
-router.post('/register', async (req, res) => {
-  const { username, email, password } = req.body;
+// Discord OAuth2 Config
+const CLIENT_ID = "YOUR_DISCORD_CLIENT_ID";
+const CLIENT_SECRET = "YOUR_DISCORD_CLIENT_SECRET";
+const REDIRECT_URI = "http://localhost:3500/api/discord/callback";
 
-  console.log('Request body:', req.body); // Log pentru debug
-
-  if (!username || !email || !password) {
-    return res.status(400).json({ message: 'All fields are required.' });
-  }
-
-  // Verifică dacă utilizatorul există deja
-  db.query('SELECT * FROM users WHERE email = ?', [email], async (err, results) => {
-    if (err) {
-      console.error('Database error during SELECT:', err); // Log eroare SELECT
-      return res.status(500).json({ message: 'Database error.' });
-    }
-
-    if (results.length > 0) {
-      console.log('User already exists:', email); // Log utilizator existent
-      return res.status(400).json({ message: 'User already exists.' });
-    }
-
-    try {
-      // Creează un hash al parolei
-      const hashedPassword = await bcrypt.hash(password, 10);
-      console.log('Hashed password:', hashedPassword); // Log parola hashată
-
-      // Salvează utilizatorul în baza de date
-      db.query(
-        'INSERT INTO users (username, email, password) VALUES (?, ?, ?)',
-        [username, email, hashedPassword],
-        (err, result) => {
-          if (err) {
-            console.error('Database error during INSERT:', err); // Log eroare INSERT
-            return res.status(500).json({ message: 'Database error.' });
-          }
-
-          console.log('User registered successfully:', email); // Log utilizator înregistrat
-          res.status(201).json({ message: 'User registered successfully!' });
-        }
-      );
-    } catch (err) {
-      console.error('Error hashing password:', err); // Log eroare hashing
-      res.status(500).json({ message: 'Internal server error.' });
-    }
-  });
+// Step 1: Redirect to Discord for Authentication
+router.get("/login", (req, res) => {
+  const discordAuthUrl = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(
+    REDIRECT_URI
+  )}&response_type=code&scope=identify email`;
+  res.redirect(discordAuthUrl);
 });
 
-// Exportă rutele
+// Step 2: Handle the callback from Discord
+router.get("/callback", async (req, res) => {
+  const code = req.query.code;
+
+  if (!code) {
+    return res.status(400).json({ message: "No code provided!" });
+  }
+
+  try {
+    // Exchange code for access token
+    const tokenResponse = await axios.post(
+      "https://discord.com/api/oauth2/token",
+      new URLSearchParams({
+        client_id: CLIENT_ID,
+        client_secret: CLIENT_SECRET,
+        grant_type: "authorization_code",
+        code,
+        redirect_uri: REDIRECT_URI,
+      }),
+      {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      }
+    );
+
+    const accessToken = tokenResponse.data.access_token;
+
+    // Use access token to fetch user details
+    const userResponse = await axios.get("https://discord.com/api/users/@me", {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    const user = userResponse.data;
+
+    // Return user data
+    res.status(200).json({
+      message: "Authentication successful!",
+      user,
+    });
+  } catch (error) {
+    console.error("Error during Discord OAuth2:", error.message);
+    res.status(500).json({ message: "Authentication failed!" });
+  }
+});
+
 module.exports = router;

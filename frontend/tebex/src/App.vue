@@ -1,12 +1,9 @@
 <template>
   <div id="app" class="min-h-screen bg-gray-100 flex flex-col">
     <nav class="bg-white shadow-md">
-      <div
-        class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center"
-      >
-        <!-- Image added here -->
-
-        <div class="text-lg font-bold text-gray-800">
+      <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+        <!-- Logo -->
+        <div class="text-lg font-bold text-gray-800 flex items-center">
           <img
             src="https://imgur.com/XWNyS70.png"
             alt="Logo"
@@ -15,33 +12,29 @@
           <div>Tebex</div>
         </div>
         <div>
-          <router-link to="/" class="text-gray-600 hover:text-blue-500 mx-2"
-            >Home</router-link
-          >
+          <!-- Butoane de navigare -->
+          <router-link to="/" class="text-gray-600 hover:text-blue-500 mx-2">Home</router-link>
           <router-link
-            v-if="isLoggedIn"
-            to="/cart"
-            class="text-gray-600 hover:text-blue-500 mx-2"
-            >Cart</router-link
-          >
-          <router-link
-            v-if="!isLoggedIn"
+            v-if="showLoginRegister"
             to="/login"
             class="text-gray-600 hover:text-blue-500 mx-2"
-            >Login</router-link
           >
+            Login
+          </router-link>
           <router-link
-            v-if="!isLoggedIn"
+            v-if="showLoginRegister"
             to="/register"
             class="text-gray-600 hover:text-blue-500 mx-2"
-            >Register</router-link
           >
+            Register
+          </router-link>
           <router-link
             v-if="isLoggedIn"
             to="/profile"
             class="text-gray-600 hover:text-blue-500 mx-2"
-            >Profile</router-link
           >
+            Profile
+          </router-link>
           <button
             v-if="isLoggedIn"
             @click="logout"
@@ -67,13 +60,17 @@ export default {
     isLoggedIn() {
       return !!this.user; // Check if user is logged in
     },
+    showLoginRegister() {
+      // Ascundem butoanele Login și Register pe Home și pe RedM root
+      return this.$route.path !== "/" && this.$route.path.startsWith("/redm");
+    },
   },
   methods: {
-    ...mapActions(["increment", "decrement", "logout"]), // Add logout action
+    ...mapActions(["logout"]),
   },
 };
 </script>
 
 <style>
-/* Add any additional styles if needed */
+/* Adaugă stiluri adiționale dacă este necesar */
 </style>

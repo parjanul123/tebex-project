@@ -4,8 +4,9 @@ import axios from "axios";
 const store = createStore({
   state: {
     count: 0,
-    cart: [], // Array to hold cart items
-    user: null, // To hold user information after login
+    cart: [], // Elemente din coșul de cumpărături
+    user: null, // Utilizatorul autentificat
+    selectedProfile: null, // Profilul selectat (ex: RedM, Erebor)
   },
   mutations: {
     increment(state) {
@@ -15,21 +16,24 @@ const store = createStore({
       state.count--;
     },
     setCart(state, items) {
-      state.cart = items; // Set cart items
+      state.cart = items; // Setează produsele în coș
     },
     addToCart(state, item) {
-      state.cart.push(item); // Add item to cart
+      state.cart.push(item); // Adaugă un produs în coș
     },
     removeFromCart(state, itemId) {
-      state.cart = state.cart.filter((item) => item.id !== itemId); // Remove item from cart
+      state.cart = state.cart.filter((item) => item.id !== itemId); // Elimină produsul din coș
     },
     setUser(state, user) {
-      state.user = user; // Set user information
+      state.user = user; // Setează informațiile utilizatorului
     },
     logout(state) {
-      state.user = null; // Clear user information on logout
-      // Optionally, you can clear the cart or any other user-specific data
-      state.cart = []; // Clear cart on logout if desired
+      state.user = null; // Resetează utilizatorul
+      state.cart = []; // Golește coșul de cumpărături
+      state.selectedProfile = null; // Resetează profilul selectat
+    },
+    setSelectedProfile(state, profile) {
+      state.selectedProfile = profile; // Setează profilul selectat
     },
   },
   actions: {
@@ -40,25 +44,42 @@ const store = createStore({
       commit("decrement");
     },
     async fetchCart({ commit }) {
-      const response = await axios.get("http://localhost:3500/api/cart");
-      commit("setCart", response.data); // Fetch and set cart items
+      try {
+        const response = await axios.get("http://localhost:3500/api/cart");
+        commit("setCart", response.data); // Setează produsele în coș
+      } catch (error) {
+        console.error("Failed to fetch cart:", error);
+      }
     },
     async addToCart({ commit, state }, item) {
-      // Create a payload that includes the user ID and the item details
+      if (!state.user) {
+        console.error("User not logged in!");
+        return;
+      }
+
       const payload = {
-        userId: state.user.id, // Get the user ID from the state
-        ...item, // Spread the item properties into the payload
+        userId: state.user.id, // ID-ul utilizatorului autentificat
+        ...item, // Include title, image, price, profile, server, package
       };
 
-      const response = await axios.post(
-        "http://localhost:3500/api/cart",
-        payload
-      );
-      commit("addToCart", response.data); // Commit add to cart action
+      try {
+        const response = await axios.post(
+          "http://localhost:3500/api/cart",
+          payload
+        );
+        // Adaugă produsul în store cu un ID unic
+        commit("addToCart", { ...item, id: response.data.itemId });
+      } catch (error) {
+        console.error("Failed to add item to cart:", error);
+      }
     },
     async removeFromCart({ commit }, itemId) {
-      await axios.delete(`http://localhost:3500/api/cart/${itemId}`);
-      commit("removeFromCart", itemId); // Commit remove from cart action
+      try {
+        await axios.delete(`http://localhost:3500/api/cart/${itemId}`);
+        commit("removeFromCart", itemId); // Elimină produsul din coș
+      } catch (error) {
+        console.error("Failed to remove item from cart:", error);
+      }
     },
     async login({ commit }, credentials) {
       try {
@@ -66,16 +87,17 @@ const store = createStore({
           "http://localhost:3500/api/login",
           credentials
         );
-        // Assuming the response contains user data
-        commit("setUser", response.data.user); // Set user data from response
+        commit("setUser", response.data.user); // Setează utilizatorul autentificat
       } catch (error) {
         console.error("Login failed:", error);
-        throw error; // Rethrow the error to handle it in the component if needed
+        throw error; // Propagă eroarea pentru gestionare ulterioară
       }
     },
     logout({ commit }) {
-      // Optionally, you can perform any logout API call here if needed
-      commit("logout"); // Clear user information on logout
+      commit("logout"); // Resetează starea aplicației
+    },
+    selectProfile({ commit }, profile) {
+      commit("setSelectedProfile", profile); // Setează profilul selectat
     },
   },
   getters: {
@@ -83,13 +105,16 @@ const store = createStore({
       return state.count;
     },
     getCart(state) {
-      return state.cart; // Getter for cart items
+      return state.cart; // Returnează produsele din coș
     },
     isLoggedIn(state) {
-      return !!state.user; // Check if user is logged in
+      return !!state.user; // Verifică dacă utilizatorul este autentificat
     },
     getUser(state) {
-      return state.user; // Getter for user information
+      return state.user; // Returnează utilizatorul autentificat
+    },
+    getSelectedProfile(state) {
+      return state.selectedProfile; // Returnează profilul selectat
     },
   },
 });
