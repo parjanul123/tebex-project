@@ -1,21 +1,23 @@
 <template>
   <div id="app" class="min-h-screen bg-gray-100 flex flex-col">
     <nav class="bg-white shadow-md">
-      <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+      <div
+        class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center"
+      >
         <!-- Logo -->
-        <div class="text-lg font-bold text-gray-800 flex items-center">
+        <router-link
+          to="/"
+          class="text-lg font-bold text-gray-800 flex items-center"
+        >
           <img
             src="https://imgur.com/XWNyS70.png"
             alt="Logo"
             class="h-8 mr-2"
           />
           <div>Tebex</div>
-        </div>
-        <div>
+        </router-link>
+        <div class="alignment">
           <!-- Butoane de navigare -->
-          <router-link to="/" class="text-gray-600 hover:text-blue-500 mx-2"
-            >Home</router-link
-          >
           <router-link
             v-if="showLoginRegister"
             to="/login"
@@ -100,4 +102,9 @@ export default {
 
 <style>
 /* Adaugă stiluri adiționale dacă este necesar */
+.alignment {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 </style>

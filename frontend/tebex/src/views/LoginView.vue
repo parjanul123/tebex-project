@@ -3,7 +3,10 @@
     <h1 class="text-2xl font-bold mb-4">Login</h1>
 
     <!-- Traditional Login Form -->
-    <form @submit.prevent="loginUser" class="bg-white p-4 rounded shadow-md mb-4">
+    <form
+      @submit.prevent="loginUser"
+      class="bg-white p-4 rounded shadow-md mb-4"
+    >
       <div class="mb-4">
         <label for="username" class="block text-sm font-semibold mb-2">
           Username
@@ -62,11 +65,7 @@
       >
         Login with
         <span class="mx-1 flex items-center">
-          <img
-            src="/Images/cfx.png"
-            alt="Cfx.re Logo"
-            class="w-6 h-6"
-          />
+          <img src="/Images/cfx.png" alt="Cfx.re Logo" class="w-6 h-6" />
         </span>
         Cfx.re
       </button>
@@ -86,8 +85,6 @@ export default {
   },
   methods: {
     loginWithDiscord() {
-      // Redirect to backend route for Discord login
-      window.location.href = "http://localhost:3500/api/discord/login";
       // Simulate successful Discord login
       this.discordLoggedIn = true;
     },
@@ -98,7 +95,8 @@ export default {
     async loginUser() {
       try {
         // Simulate backend login
-        const response = await this.$http.post("http://localhost:3500/api/login", {
+        console.log("login");
+        const response = this.$store.dispatch("login", {
           username: this.username,
           password: this.password,
         });

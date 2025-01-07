@@ -2,9 +2,9 @@ const express = require("express");
 const router = express.Router();
 const axios = require("axios");
 
-const CLIENT_ID = "DISCORD_CLIENT_ID";
-const CLIENT_SECRET = "DISCORD_CLIENT_SECRET";
-const REDIRECT_URI = "http://localhost:3500/api/discord/callback";
+const CLIENT_ID = "1324412832380358788";
+const CLIENT_SECRET = "axn6ObK5Fc1RBz1dNq8eo4JyQ3MEAkHW";
+const REDIRECT_URI = "http://localhost:8081/api/discord/callback";
 
 router.get("/login", (req, res) => {
   const discordAuthUrl = `https://discord.com/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(

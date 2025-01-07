@@ -2,12 +2,12 @@ require("dotenv").config(); // Load environment variables
 const mysql = require("mysql2/promise");
 
 const dbConfig = {
-  host: process.env.DB_HOST || "localhost",
-  port: process.env.DB_PORT || 3306,
-  user: process.env.DB_USER || "root",
-  password: process.env.DB_PASSWORD || "",
-  database: process.env.DB_NAME || "test",
-  ssl:  false 
+  host: "localhost",
+  port: 3307,
+  user: "my_user",
+  password: "my_password",
+  database: "my_database",
+  ssl: false,
 };
 
 let connection;
@@ -36,6 +36,11 @@ async function connectToDatabase() {
             id INT AUTO_INCREMENT PRIMARY KEY,
             user_id INT NOT NULL,
             name VARCHAR(255) NOT NULL,
+            image VARCHAR(255) NOT NULL,
+            price int NOT NULL,
+            profile VARCHAR(255) NOT NULL,
+            server VARCHAR(255) NOT NULL,
+            package VARCHAR(255) NOT NULL,
             quantity INT NOT NULL,
             FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
           );
