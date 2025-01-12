@@ -2,11 +2,7 @@
   <div class="main-container">
     <!-- Secțiunea cu fundal negru -->
     <div class="bg-black text-white py-6 px-4 flex items-center">
-      <img
-        src="/Images/case.png"
-        alt="Case VIP Logo"
-        class="w-16 h-16 mr-4"
-      />
+      <img src="/Images/case.png" alt="Case VIP Logo" class="w-16 h-16 mr-4" />
       <div>
         <h1 class="text-3xl font-bold">Case VIP</h1>
         <p class="text-gray-300">Explore the most luxurious VIP houses!</p>
@@ -35,27 +31,58 @@
       </div>
 
       <!-- Container pentru harta interactivă -->
-      <div
-        id="zoom-container"
-        ref="zoomContainer"
-        @mousedown="startDrag"
-        @mousemove="drag"
-        @mouseup="endDrag"
-        @mouseleave="endDrag"
-        @wheel="handleWheel"
-      >
-        <img
-          id="map-image"
-          src="/Images/rdr2-map.png"
-          alt="Interactive Map"
-          :style="{ transform: `scale(${zoomLevel}) translate(${translateX}px, ${translateY}px)` }"
-        />
-        <div class="zoom-controls">
-          <button @click="zoomIn">Zoom In</button>
-          <button @click="zoomOut">Zoom Out</button>
-          <button @click="resetView">Reset</button>
+      <div class="map-and-sidebar">
+        <div id="zoom-container" class="map-container">
+          <div class="map-wrapper" :style="{ transform: `scale(${zoomLevel}) translate(${translateX}px, ${translateY}px)` }">
+            <img
+              src="/Images/rdr2-map.png"
+              alt="Interactive Map"
+              class="map-image"
+            />
+            <!-- Checkpoint pentru casa selectată -->
+            <div
+              v-if="selectedHouse"
+              class="checkpoint"
+              :style="{
+                top: `${selectedHouse.coordinates.y}%`,
+                left: `${selectedHouse.coordinates.x}%`,
+              }"
+            >
+              🏠
+            </div>
+          </div>
+
+          <!-- Controale pentru deplasare -->
+          <div class="arrow-controls">
+            <button @click="move('up')">⬆️</button>
+            <button @click="move('left')">⬅️</button>
+            <button @click="move('right')">➡️</button>
+            <button @click="move('down')">⬇️</button>
+          </div>
+
+          <!-- Controale pentru zoom -->
+          <div class="zoom-controls">
+            <button @click="zoomIn">Zoom In</button>
+            <button @click="zoomOut">Zoom Out</button>
+            <button @click="resetView">Reset</button>
+          </div>
         </div>
-       
+
+        <!-- Secțiunea din dreapta -->
+        <div class="right-sidebar">
+          <h2 class="text-lg font-bold mb-4">Selected House</h2>
+          <div v-if="selectedHouse" class="selected-house">
+            <img :src="selectedHouse.image" alt="Selected House" class="house-image-large" />
+            <h3 class="text-md font-bold">{{ selectedHouse.name }}</h3>
+            <p class="text-gray-700">Price: {{ selectedHouse.price }} $</p>
+            <button class="subscribe-button" @click="completeOperation">
+               Subscribe
+            </button>
+          </div>
+          <div v-else class="no-selection">
+            <p class="text-gray-500">No house selected. Please select a house.</p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -69,29 +96,30 @@ export default {
       zoomLevel: 1, // Nivelul de zoom
       translateX: 0, // Deplasare pe axa X
       translateY: 0, // Deplasare pe axa Y
-      dragging: false, // Starea de drag
-      lastMouseX: null, // Ultima poziție X a mouse-ului
-      lastMouseY: null, // Ultima poziție Y a mouse-ului
       houses: [
         {
           id: 1,
-          name: "Luxury Villa",
-          price: 500000,
-          image: "/Images/villa.jpg",
+          name: "Conac TumbleWeed",
+          price: 16,
+          image: "/Images/conactumbleweed.png",
+          coordinates: { x: 13, y: 61 }, 
         },
         {
           id: 2,
-          name: "Mountain Cabin",
-          price: 250000,
-          image: "/Images/cabin.jpg",
+          name: "Ferma 1",
+          price: 25,
+          image: "/Images/ferma 1.png",
+          coordinates: { x: 65, y: 30 }, 
         },
         {
           id: 3,
-          name: "Beach House",
-          price: 750000,
-          image: "/Images/beachhouse.jpg",
+          name: "Caliga Hall",
+          price: 20,
+          image: "/Images/caligahall.png",
+          coordinates: { x: 74, y: 48}, 
         },
       ],
+      selectedHouse: null, // Casa selectată
     };
   },
   methods: {
@@ -106,28 +134,22 @@ export default {
       this.translateX = 0;
       this.translateY = 0;
     },
-    startDrag(event) {
-      this.dragging = true;
-      this.lastMouseX = event.clientX;
-      this.lastMouseY = event.clientY;
-    },
-    drag(event) {
-      if (!this.dragging) return;
-
-      const deltaX = event.clientX - this.lastMouseX;
-      const deltaY = event.clientY - this.lastMouseY;
-
-      this.translateX += deltaX / this.zoomLevel;
-      this.translateY += deltaY / this.zoomLevel;
-
-      this.lastMouseX = event.clientX;
-      this.lastMouseY = event.clientY;
-    },
-    endDrag() {
-      this.dragging = false;
-    },
     selectHouse(house) {
-      alert(`You selected the ${house.name}! Price: $${house.price}`);
+      this.selectedHouse = house;
+    },
+    completeOperation() {
+      if (this.selectedHouse) {
+        alert(`Operation completed for ${this.selectedHouse.name}!`);
+      } else {
+        alert("No house selected. Please select a house first.");
+      }
+    },
+    move(direction) {
+      const step = 10; // Magnitudinea deplasării
+      if (direction === "up") this.translateY -= step / this.zoomLevel;
+      if (direction === "down") this.translateY += step / this.zoomLevel;
+      if (direction === "left") this.translateX -= step / this.zoomLevel;
+      if (direction === "right") this.translateX += step / this.zoomLevel;
     },
   },
 };
@@ -149,6 +171,11 @@ export default {
 .content-container {
   display: flex;
   margin-top: 20px;
+}
+
+.map-and-sidebar {
+  display: flex;
+  flex: 1;
 }
 
 /* Bara laterală */
@@ -186,38 +213,61 @@ export default {
   border-radius: 4px;
 }
 
-/* Harta Leaflet */
-#zoom-container {
-  flex: 1;
-  height: 800px; /* Înălțimea containerului */
-  background-color: #e3d2b0; /* Culoare similară cu harta */
-  overflow: hidden; /* Ascunde marginile imaginii la drag */
-  position: relative;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-/* Imaginea hărții */
-#map-image {
+.house-image-large {
   width: 100%;
-  transition: transform 0.2s ease; /* Tranziție pentru zoom */
-  cursor: grab; /* Iconiță pentru drag */
+  border-radius: 4px;
+  margin-bottom: 10px;
 }
 
-#map-image:active {
-  cursor: grabbing; /* Iconiță pentru drag activ */
+.no-selection {
+  text-align: center;
+  color: #999;
 }
 
-/* Controale pentru zoom */
-.zoom-controls {
+/* Harta interactivă */
+.map-container {
+  flex: 3; /* Ocupă 3/4 din spațiu */
+  height: 800px; /* Înălțimea containerului */
+  position: relative;
+  background-color: #e3d2b0; /* Culoare similară cu harta */
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.map-wrapper {
+  position: relative;
+  height: 100%;
+}
+
+.map-image {
+  width: 100%;
+}
+
+.checkpoint {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.zoom-controls,
+.arrow-controls {
   position: absolute;
   bottom: 20px;
-  right: 20px;
   display: flex;
   gap: 10px;
 }
 
-.zoom-controls button {
+.zoom-controls {
+  right: 20px;
+}
+
+.arrow-controls {
+  left: 20px;
+  flex-direction: column;
+}
+
+button {
   background-color: #007bff;
   color: white;
   border: none;
@@ -227,31 +277,15 @@ export default {
   transition: background-color 0.3s ease;
 }
 
-.zoom-controls button:hover {
+button:hover {
   background-color: #0056b3;
 }
 
-/* Controale săgeți */
-.arrow-controls {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
+/* Secțiunea din dreapta */
+.right-sidebar {
+  flex: 1; /* Ocupă 1/4 din spațiu */
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-left: 1px solid #ddd;
 }
-
-.arrow-controls button {
-  background-color: #28a745;
-  color: white;
-  border: none;
-  padding: 10px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.arrow-controls button:hover {
-  background-color: #218838;
-}
-</style> 
+</style>
