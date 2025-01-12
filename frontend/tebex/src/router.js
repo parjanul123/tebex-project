@@ -15,6 +15,9 @@ import VipGoldView from "./views/VipGoldView.vue";
 import VipSilverView from "./views/VipSilverView.vue";
 import VipBronzeView from "./views/VipBronzeView.vue";
 import CostumCalView from "./views/CostumCalView.vue";
+import RegisterServer from "./views/RegisterServer.vue";
+import LoginServer from "./views/LoginServer.vue";
+import ProjectUploadView from "./views/ProjectUploadView.vue";
 
 const routes = [
   {
@@ -23,9 +26,25 @@ const routes = [
     component: HomeView,
   },
   {
+    path: "/project-upload",
+    name: "ProjectUpload",
+    component: ProjectUploadView,
+    meta: { requiresAuth: true },
+  },
+  {
     path: "/connect-wallet",
     name: "ConnectWallet",
     component: WalletView,
+  },
+  {
+    path: "/server-login",
+    name: "ServerLogin",
+    component: LoginServer,
+  },
+  {
+    path: "/server-register",
+    name: "ServerRegister",
+    component: RegisterServer,
   },
   {
     path: "/redm",

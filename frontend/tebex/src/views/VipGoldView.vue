@@ -7,13 +7,9 @@
           Package Description
 Pachetul Aur iti oferta prioritate in queue nivel 1 si urmatoarele: 
 
-- Carutele de la Bronz + Argint
 
 - Un Cal Custom la alegere. Calul ales ramne pana moare dupa care poate fi schimbat cu altul.
 
-- O caruta de vanatoare de 1200 sloturi si 40 animale
-
-- Un balon Balon cu aer
 
 - Salariu de 10$ + 0.7 Gold la fiecare 20 de minute.  
         </p>

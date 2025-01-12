@@ -8,7 +8,7 @@
 
 -1 Cal  
 
-- 1 Caruta de Vanatoare
+
 
 -Salariu de 2$ + 0.2 Gold pe ora.
         </p>

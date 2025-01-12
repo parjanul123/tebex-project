@@ -10,8 +10,7 @@ Pachetul Argint iti oferta prioritate in queue nivel 2 si urmatoarele:
 -Beneficiile de la Bronz
 
 -1 Cal  
-
--1 Caruta de Lux  
+ 
 
 -Salariu de 3$ + 0.3 Gold la fiecare 20 de minute.
         </p>
