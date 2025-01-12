@@ -44,6 +44,23 @@
             Logout
           </button>
 
+          <!-- Buton pentru Cart -->
+          <router-link
+            to="/cart"
+            class="text-gray-600 hover:text-blue-500 mx-2"
+          >
+            
+            <span>Cart</span>
+            <!-- Numărul de produse -->
+            <span
+              v-if="cartCount > 0"
+              class="absolute top-0 right-0 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full"
+              style="transform: translate(50%, -50%)"
+            >
+              {{ cartCount }}
+            </span>
+          </router-link>
+
           <!-- Buton pentru Portofel MultiversX sau Buy EGLD -->
           <template v-if="walletConnected">
             <a
@@ -86,12 +103,15 @@ import { mapState, mapActions } from "vuex";
 
 export default {
   computed: {
-    ...mapState(["count", "user", "walletConnected"]), // Include flag-ul walletConnected din Vuex
+    ...mapState(["count", "user", "walletConnected", "cartItems"]), // Include `cartItems` din Vuex
     isLoggedIn() {
       return !!this.user; // Check if user is logged in
     },
     showLoginRegister() {
       return this.$route.path !== "/" && this.$route.path.startsWith("/redm");
+    },
+    cartCount() {
+      return this.cartItems ? this.cartItems.length : 0; // Numărul total de produse din cart
     },
   },
   methods: {

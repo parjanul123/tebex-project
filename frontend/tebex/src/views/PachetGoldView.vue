@@ -1,14 +1,24 @@
 <template>
   <div class="container mx-auto p-4">
-    <h1 class="text-2xl font-bold mb-4">Pachet Gold</h1>
-    <p class="text-gray-700 mb-4">Explore our exclusive Gold packages!</p>
+    <!-- Secțiunea de sus cu fundal negru -->
+    <div class="bg-black text-white py-6 px-4 flex items-center">
+      <img
+        src="/Images/coin.png"
+        alt="Coin Logo"
+        class="w-16 h-16 mr-4"
+      />
+      <div>
+        <h1 class="text-3xl font-bold">Pachet Gold</h1>
+        <p class="text-gray-300">Explore our exclusive Gold packages!</p>
+      </div>
+    </div>
 
     <!-- Magazinul cu produse -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6 relative z-10">
       <div
         v-for="(item, index) in shopItems"
         :key="index"
-        class="bg-white rounded-lg shadow-md p-4 flex flex-col items-center"
+        class="bg-white bg-opacity-90 rounded-lg shadow-md p-4 flex flex-col items-center"
       >
         <img
           :src="item.image"
@@ -17,7 +27,7 @@
         />
         <h2 class="mt-2 text-lg font-semibold">{{ item.title }}</h2>
         <h3 class="mt-1 text-gray-700 font-medium">
-          Price: {{ item.price }} € / 
+          Price: {{ item.price }} € /
           <span v-if="egldPrice">
             {{ calculatePackagePrice(item.price) }} EGLD
           </span>
@@ -39,7 +49,7 @@ import { mapGetters, mapActions } from "vuex";
 export default {
   name: "PachetGoldView",
   computed: {
-    ...mapGetters(["egldPrice", "calculatePackagePrice"]), // Obține prețul EGLD și funcția de calcul
+    ...mapGetters(["egldPrice", "calculatePackagePrice"]),
   },
   data() {
     return {
@@ -56,7 +66,7 @@ export default {
     ...mapActions(["addToCart", "fetchEGLDPrice"]),
   },
   created() {
-    this.fetchEGLDPrice(); // Obține prețul EGLD când componenta este creată
+    this.fetchEGLDPrice();
   },
 };
 </script>
@@ -64,6 +74,24 @@ export default {
 <style scoped>
 .container {
   max-width: 1200px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+  min-height: 100vh; /* Face pagina să ocupe întreg ecranul */
+}
+
+.bg-black {
+  background-color: #000; /* Fundal negru */
+}
+
+img {
+  object-fit: cover;
+}
+
+.relative {
+  position: relative;
+  z-index: 10;
 }
 
 button {

@@ -9,6 +9,12 @@ import RedMView from "./views/RedMView.vue";
 import EreborView from "./views/EreborView.vue";
 import PachetGoldView from "./views/PachetGoldView.vue";
 import WalletView from "./views/WalletView.vue";
+import VipPachetView from "./views/VipPachetView.vue";
+import CaseVipView from "./views/CaseVipView.vue";
+import VipGoldView from "./views/VipGoldView.vue";
+import VipSilverView from "./views/VipSilverView.vue";
+import VipBronzeView from "./views/VipBronzeView.vue";
+import CostumCalView from "./views/CostumCalView.vue";
 
 const routes = [
   {
@@ -35,6 +41,36 @@ const routes = [
     path: "/redm/erebor/gold",
     name: "PachetGold",
     component: PachetGoldView,
+  },
+  {
+    path: "/redm/erebor/vip",
+    name: "VipPachet",
+    component: VipPachetView,
+  },
+  {
+    path: "/redm/erebor/vip/vipgold",
+    name: "VipGold",
+    component: VipGoldView,
+  },
+  {
+    path: "/redm/erebor/vip/vipsilver",
+    name: "VipSilver",
+    component: VipSilverView,
+  },
+  {
+    path: "/redm/erebor/vip/vipbronze",
+    name: "VipBronze",
+    component: VipBronzeView,
+  },
+  {
+    path: "/redm/erebor/vip/costumcal",
+    name: "CostumCal",
+    component: CostumCalView,
+  },
+  {
+    path: "/redm/erebor/casevip",
+    name: "CaseVip",
+    component: CaseVipView,
   },
   {
     path: "/cart",
